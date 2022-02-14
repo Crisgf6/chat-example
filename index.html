@@ -18,7 +18,7 @@
   <body>
     <ul id="messages"></ul>
     <form id="form" action="">
-      <input id="input" autocomplete="off" /><button>Send</button>
+      <input id="input" autocomplete="off" /><button>Send</button><button onclick="socket.close();">Close</button>
     </form>
     <script src="/socket.io/socket.io.js"></script>
 
@@ -37,7 +37,7 @@
         }
       });
 
-      socket.on('chat message', function(msg) {
+      socket.on('chat message', function(msg) { 
         var item = document.createElement('li');
         item.textContent = msg;
         messages.appendChild(item);
