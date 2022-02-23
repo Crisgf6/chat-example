@@ -66,7 +66,7 @@
   <form id="form" action="">
     <input id="input" autocomplete="off" onkeypress="isTyping('true'); timer=5;" onkeyup="isTyping('false')"/><button>Send</button><button onclick="socket.close();">Close</button>
   </form>
-  <div id="typing_on">No one is typing</div>
+  <div id="typing_on">[No one is typing]</div>
   <script src="/socket.io/socket.io.js"></script>
 
   <script>
@@ -104,13 +104,11 @@
 
     function isTyping(val) {
       if (val == 'true') {
-        console.log('User is typing...');
-        document.getElementById('typing_on').innerHTML = "User is typing...";
+        document.getElementById('typing_on').innerHTML = "[User is typing...]";
       } else {
 
         if (timer <= 0) {
-          console.log('No one is typing');
-          document.getElementById('typing_on').innerHTML = "No one is typing";
+          document.getElementById('typing_on').innerHTML = "[No one is typing]";
         } else {
           setTimeout("reduceTimer();", 500);
         }
