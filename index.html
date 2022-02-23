@@ -43,6 +43,11 @@
         messages.appendChild(item);
         window.scrollTo(0, document.body.scrollHeight);
       });
+
+      socket.on('disconnect', function () {
+        console.log('disconnect client event....');
+      });
+
     </script>
   </body>
 </html>
