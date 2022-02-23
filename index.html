@@ -66,6 +66,7 @@
   <form id="form" action="">
     <input id="input" autocomplete="off" onkeypress="isTyping('true'); timer=5;" onkeyup="isTyping('false')"/><button>Send</button><button onclick="socket.close();">Close</button>
   </form>
+  <div id="typing_on">No one is typing -blank speace.</div>
   <script src="/socket.io/socket.io.js"></script>
 
   <script>
