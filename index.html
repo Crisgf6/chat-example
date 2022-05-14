@@ -58,6 +58,11 @@
     #messages>li:nth-child(odd) {
       background: #efefef;
     }
+
+    .userImg {
+      width: 35px;
+      margin-right: 10px;
+    }
   </style>
 </head>
 
@@ -75,18 +80,23 @@
     var messages = document.getElementById('messages');
     var form = document.getElementById('form');
     var input = document.getElementById('input');
+    let userImg = "";
 
     form.addEventListener('submit', function (e) {
       e.preventDefault();
       if (input.value) {
-        socket.emit('chat message', input.value);
+        socket.emit('chat message', {message: input.value, userImg});
         input.value = '';
       }
     });
 
     socket.on('chat message', function (msg) {
       var item = document.createElement('li');
+      var img = document.createElement('img');
+      img.setAttribute('src', userImg);
+      img.classList.add('userImg');
       item.textContent = msg;
+      item.appendChild(img);
       messages.appendChild(item);
       window.scrollTo(0, document.body.scrollHeight);
     });
@@ -114,6 +124,21 @@
         }
       }
     }
+
+    function profilePic(){
+      const file = document.getElementById('img-upload').files[0];
+      const reader = new FileReader();
+      reader.onloadend = function () {
+        socket.emit('profileImg', reader.result);
+        userImg = reader.result;
+      }
+      reader.readAsDataURL(file);
+    }
+
+    socket.on('profileImg', function (msg){
+      const img = document.getElementById("userImg");
+      img.setAttribute("src", msg)
+    });
 
   </script>
 </body>
