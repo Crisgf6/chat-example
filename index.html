@@ -87,6 +87,19 @@
 
     var submitImg = () => socket.emit('submitImg', src)
 
+    socket.on('sentImg', (src) => {
+      // Create Img...
+      var img = document.createElement('img')
+      img.src = (window.URL || window.webkitURL).createObjectURL(
+        new Blob([src], {
+          type: 'image/png'
+        })
+      )
+      img.width = 200
+      img.height = 200
+      document.querySelector('div').append(img)
+    })
+
     form.addEventListener('submit', function (e) {
       e.preventDefault();
       if (input.value) {
@@ -105,19 +118,6 @@
     socket.on('disconnect', function () {
       console.log('disconnect client event....');
     });
-
-    socket.on('sentImg', (src) => {
-      // Create Img...
-      var img = document.createElement('img')
-      img.src = (window.URL || window.webkitURL).createObjectURL(
-        new Blob([src], {
-          type: 'image/png'
-        })
-      )
-      img.width = 200
-      img.height = 200
-      document.querySelector('div').append(img)
-    })
 
     var timer = 0;
 
