@@ -58,11 +58,6 @@
     #messages>li:nth-child(odd) {
       background: #efefef;
     }
-
-    .userImg {
-      width: 35px;
-      margin-right: 10px;
-    }
   </style>
 </head>
 
@@ -70,6 +65,8 @@
   <ul id="messages"></ul>
   <form id="form" action="">
     <input id="input" autocomplete="off" onkeypress="isTyping('true'); timer=5;" onkeyup="isTyping('false')"/><button>Send</button><button onclick="socket.close();">Close</button>
+    <input type="file" id="img" onchange="setImgSrc(this)" accept="image/*" />
+    <input type="submit" onclick="submitImg()" />
   </form>
   <div id="typing_on">[No one is typing]</div>
   <script src="/socket.io/socket.io.js"></script>
@@ -80,23 +77,27 @@
     var messages = document.getElementById('messages');
     var form = document.getElementById('form');
     var input = document.getElementById('input');
-    let userImg = "";
+    var src;
+
+    var setImgSrc = (elm) => {
+      var fr = new FileReader()
+      fr.onload = () => (src = fr.result)
+      fr.readAsArrayBuffer(elm.files[0])
+    }
+
+    var submitImg = () => socket.emit('submitImg', src)
 
     form.addEventListener('submit', function (e) {
       e.preventDefault();
       if (input.value) {
-        socket.emit('chat message', {message: input.value, userImg});
+        socket.emit('chat message', input.value);
         input.value = '';
       }
     });
 
     socket.on('chat message', function (msg) {
       var item = document.createElement('li');
-      var img = document.createElement('img');
-      img.setAttribute('src', userImg);
-      img.classList.add('userImg');
       item.textContent = msg;
-      item.appendChild(img);
       messages.appendChild(item);
       window.scrollTo(0, document.body.scrollHeight);
     });
@@ -104,6 +105,19 @@
     socket.on('disconnect', function () {
       console.log('disconnect client event....');
     });
+
+    socket.on('sentImg', (src) => {
+      // Create Img...
+      var img = document.createElement('img')
+      img.src = (window.URL || window.webkitURL).createObjectURL(
+        new Blob([src], {
+          type: 'image/png'
+        })
+      )
+      img.width = 200
+      img.height = 200
+      document.querySelector('div').append(img)
+    })
 
     var timer = 0;
 
@@ -124,21 +138,6 @@
         }
       }
     }
-
-    function profilePic(){
-      const file = document.getElementById('img-upload').files[0];
-      const reader = new FileReader();
-      reader.onloadend = function () {
-        socket.emit('profileImg', reader.result);
-        userImg = reader.result;
-      }
-      reader.readAsDataURL(file);
-    }
-
-    socket.on('profileImg', function (msg){
-      const img = document.getElementById("userImg");
-      img.setAttribute("src", msg)
-    });
 
   </script>
 </body>
